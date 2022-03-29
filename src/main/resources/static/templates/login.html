@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	    <meta name="theme-color" content="#563d7c">
+	    
+	    <link rel="icon" href="/static/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon" />
+		
+	    <title>{{ login.title }}</title>
+	    
+	    <link rel="stylesheet" href="/static/css/bootstrap.css">
+	    <link rel="stylesheet" href="/static/css/smartfactory.css">
+	    
+	    <style>
+			.bd-placeholder-img {
+		        font-size: 1.125rem;
+		        text-anchor: middle;
+		        -webkit-user-select: none;
+		        -moz-user-select: none;
+		        -ms-user-select: none;
+		        user-select: none;
+	      	}
+
+      		@media (min-width: 768px) {
+        		.bd-placeholder-img-lg {
+          			font-size: 3.5rem;
+        		}
+      		}
+			
+			body {
+				background-image: url("/static/images/login_bg.jpg");
+				background-size: 100%;
+			}
+			
+			.form-signin {
+				width: 100%;
+				max-width: 440px;
+				margin-top: 265px;
+				margin-left: 810px;
+			}
+			.form-signin .checkbox {
+				font-weight: 400;
+			}
+			.form-signin .form-control {
+				position: relative;
+				box-sizing: border-box;
+				height: auto;
+				padding: 10px;
+				font-size: 16px;
+			}
+			.form-signin .form-control:focus {
+				z-index: 2;
+			}
+			
+			#introduceWrap {
+				display: flex;
+				align-items: center;
+				margin-top: 22px;
+			}
+			
+			#loginBtn {
+				margin-left: 21px;
+			}
+			
+			#loginBtn button {
+				padding: 0;
+				border: 0;
+				background-color: transparent;
+			}
+			
+			.inputForm {
+				position: relative;
+				margin-bottom: 8px;
+			}
+			
+			.inputForm:last-child {
+				margin-bottom: 0;
+			}
+			
+			.inputForm input {
+				position: absolute;
+				height: 34px;
+				padding: 0px 10px;
+				background-color: transparent;
+				width: 100%;
+				border: 0;
+				color: #6d6e71;
+			}
+			
+			.inputForm input:focus {
+				outline: none;
+			}
+			
+			.inputForm input::-webkit-input-placeholder,
+			.inputForm input:-ms-input-placeholder {
+				color: #6d6e71;
+			}
+			
+			#inputFormWrap {
+				margin-top: 28px;
+			}
+    	</style>
+	    
+	    <script src="/static/js/vue.js"></script>
+	    <script src="/static/js/jquery.slim.js"></script>
+		<script src="/static/js/popper.min.js"></script>
+		<script src="/static/js/bootstrap.min.js"></script>
+    </head>
+	<body class="text-center">
+		<form class="form-signin" action="./login" method="post" id="app" name="app">
+			<img src="/static/images/login_logo.png" alt="" style="max-width: 100%; height: auto;" >
+			<div class="d-flex justify-content-start align-items-center" id="inputFormWrap">
+				<div>
+					<div class="inputForm">
+				  		<label for="username" class="sr-only">ID</label>
+				  		<input type="text" id="username" name="username" placeholder="ID" required autofocus @keyup.f2="fn" v-model.trim="username">
+			  			<img src="/static/images/login_id_form.png"/>
+			  		</div>
+			  		<div class="inputForm">
+				  		<label for="password" class="sr-only">Password</label>
+				  		<input type="password" id="password" name="password" placeholder="Password" required v-model.trim="password">
+	  					<img src="/static/images/login_pw_form.png"/>
+	  				</div>
+	  			</div>
+	  			<div class="pointer" id="loginBtn">
+		  			<button type="submit"><img src="/static/images/login_btn.png"/></button>
+	  			</div>
+  			</div>
+  			<div id="introduceWrap">
+  				<img src="/static/images/login_bottom_bar.jpg"/>
+  				<a href="./introduce"><img src="/static/images/introduce_btn.png"/></a>
+  			</div>
+		</form>
+		<script>
+			
+			localStorage.removeItem("loginDt");
+			
+			var vm = new Vue({
+				el: "#app",
+	        	data: {
+	        		username: '',
+	            	password: ''
+	        	},
+	        	methods: {
+	        		fn: function() {
+		        		//this.username = 'admin';
+		        		//this.password = 'admin';
+		        		//setTimeout(() => document.app.submit(), 500);
+	        		}
+	        	}
+	      	})
+    	</script>
+	</body>
+</html>

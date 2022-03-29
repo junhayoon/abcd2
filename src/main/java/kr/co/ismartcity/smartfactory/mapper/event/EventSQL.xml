@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="kr.co.ismartcity.smartfactory.mapper.event.EventMapper">
+	
+	<!-- 센서 에러 코드 존재 시 이벤트 트리거 조회 -->
+	<select id="getEventTriggerInfo">
+		/* EventMapperSQL - getEventTriggerInfo : 센서 에러 코드 존재 시 이벤트 트리거 조회 */
+		SELECT seq, event_cd, event_key, value, event_grade, event_nm, event_msg
+		  FROM event_trigger_info
+		 WHERE 1 = 1
+		   AND event_cd = #{eventCd}
+		   AND event_key = #{eventKey}
+		   AND event_grade = #{eventGrade}
+	</select>
+	
+	<!-- 서버 정의된 값을 이용한 이벤트 트리거 조회 -->
+	<select id="getEventTriggerByValue" resultType="EventTriggerVo">
+		/* EventMapperSQL - getEventTriggerByValue : 서버 정의된 값을 이용한 이벤트 트리거 조회 */
+		SELECT eti.seq, eti.event_nm, eti.event_msg,
+		 	   eventCd.cd_nm as event_cd, gradeCd.cd_nm AS event_grade
+		  FROM event_trigger_info eti
+		  JOIN code eventCd ON eti.event_cd = eventCd.cd
+		  JOIN code gradeCd ON eti.event_grade = gradeCd.cd
+		 WHERE 1 = 1
+		   AND eti.event_cd = #{eventCd}
+		   AND eti.event_key = #{eventKey}
+		   <if test='value != null'>
+		       <![CDATA[
+			       AND eti.value <= #{value}
+			   ]]>
+		   </if>
+		 ORDER BY eti.value DESC
+		 LIMIT 1
+	</select>
+	
+	<!-- 대시보드 이벤트 데이터 insert -->
+	<insert id="insertDashboardEvent" parameterType="DashboardEventVo">
+		/* EventMapperSQL - insertDashboardEvent : 대시보드 이벤트 데이터 insert */
+		INSERT INTO dashboard_event (
+			 event_cd, event_trigger_seq, category_cd, grade_cd, dash_facility, facility_fcode, gateway
+			,create_date_time, checking, dash_user, create_user_id
+			,category_code_master_cd, event_code_master_cd, grade_code_master_cd
+			,confirm_message
+		)
+		VALUES (
+			 #{eventCd}, #{eventTriggerSeq}, #{categoryCd}, #{gradeCd}, #{dashFacility}, #{facilityFcode}, #{gateway}
+			,#{createDateTime}, #{checking} ,#{dashUser}, #{createUserId}
+			,#{categoryCodeMasterCd}, #{eventCodeMasterCd}, #{gradeCodeMasterCd}
+			,#{confirmMessage}
+		)
+	</insert>
+	
+	<!-- 이벤트 구분(센서구분)값을 통한 이벤트 정보 조회 -->
+	<select id="getEventInfoByGubun" resultType="EventInfoVo">
+		/* EventMapperSQL - getEventInfoByGubun : 이벤트 구분(센서구분)값을 통한 이벤트 정보 조회 */
+		SELECT seq, area, event_gb, event_cd, event_grade_cd, event_nm, event_msg, event_val, popup_yn
+		  FROM event_info
+		 WHERE 1 = 1
+		   AND event_gb = #{eventGb}
+		 ORDER BY event_val ASC
+	</select>
+	
+	<!-- 주의경고를 위한 이벤트 정보 조회 -->
+	<select id="getWarningEventInfo" resultType="EventInfoVo">
+		/* EventMapperSQL - getWarningEventInfo : 주의경고를 위한 이벤트 정보 조회 */
+		SELECT seq, area, event_gb, event_cd, event_grade_cd ,event_nm, event_msg, event_val, popup_yn
+		  FROM event_info
+		 WHERE 1 = 1
+		   AND event_gb = #{eventGb}
+		   AND event_cd = #{eventCd}
+		   AND event_val <![CDATA[<=]]> #{eventVal}
+		 ORDER BY event_val DESC
+		 LIMIT 1
+	</select>
+	
+	<!-- 이벤트가 발생한 사업장 정보 조회 -->
+	<select id="getEventPlaceByFcode" resultType="EventPlaceVo">
+		/* EventMapperSQL - getEventPlaceByFcode : 이벤트가 발생한 사업장 정보 조회 */
+		SELECT f.fcode, f.facility_name, f.facility_category_ccode, f.latitude, f.longitude
+			  ,fcg.category_name
+			  ,w.id AS workplace_id ,w.workplace_name, w.workplace_addr, w.workplace_tel
+		  FROM facility f
+		  JOIN facility_category fcg ON f.facility_category_ccode = fcg.ccode
+		  JOIN workplace w ON f.workplace_id = w.id
+		 WHERE 1 = 1
+		   AND f.fcode = #{fcode}
+	</select>
+	
+</mapper>

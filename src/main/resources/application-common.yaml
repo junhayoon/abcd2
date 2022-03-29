@@ -1,0 +1,75 @@
+spring:
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8
+  mustache:
+    prefix: classpath:/static/templates/
+    suffix: .html
+  security:
+      user:
+        password: password
+  mvc:
+    static-path-pattern: /static/**    
+  resources:
+    static-locations:
+    - classpath:/static/
+    add-mappings: true
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+      FAIL_ON_EMPTY_BEANS: false
+    date-format: com.fasterxml.jackson.databind.util.StdDateFormat
+  mobile:
+    devicedelegatingviewresolver:
+      enabled: true
+    sitepreference:
+      enabled: true
+
+server:
+  address: 0.0.0.0
+  port: 8282
+  servlet:
+    session:
+      timeout: -1
+      
+mybatis:
+  type-aliases-package: kr.co.ismartcity.smartfactory.model
+  mapper-locations: classpath*:**/mapper/**/*SQL.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+thread:
+  pool: 
+    writefile: 
+      max: 3
+      core: 2
+      queue: 2
+      prefix: writefile-Executor
+    mobius: 
+      max: 50
+      core: 10
+      queue: 0
+      prefix: parseMobius-Executor
+      
+websocket:
+  paths: /wamp
+  w2c: /w2c
+  c2w: /c2w
+  
+ruleset:
+  path: /src/main/resources/kr/co/ismartcity/smartfactory/drl/
+  namespace: kr.co.ismartcity.smartfactory.drl
+  
+openapi:
+  url: https://apis.openapi.sk.com/tmap/traffic
+  appKey: l7xx30fd8bf5e67d49fea188d27547e8eadb
+  version: 1
+  zoomLevel: 18
+  trafficType: AUTO
+  centerLon: 126.695906
+  centerLat: 37.405324
+
+easycerti:
+  filter:
+    config: /home/devel/easycerti/ezfilter.config
+     

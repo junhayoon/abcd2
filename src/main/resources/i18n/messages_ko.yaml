@@ -1,0 +1,41 @@
+login:
+  title: "인천남동 스마트산업단지 - 로그인"
+  label: 
+    message: "로그인을 해주세요."
+  error:
+    message: "아이디 또는 비밀번호가 일치하지 않습니다." 
+error:
+  password:
+    mismatch: "비밀번호가 일치하지 않습니다."
+  request:
+    invalid: "잘못된 요청입니다."    
+    fail: "정상적으로 처리하지 못했습니다."
+  server:
+    internal: "처리중 장애가 발생하였습니다."
+  database:
+    duplicate: "중복키 오류가 발생하였습니다."
+    notfound: "선택하신 아이템이 존재하지 않습니다."
+    hasChildren: "선택하신 아이템에 포함된 다른 하위 아이템이 있습니다."
+  unreal:
+    fail: "미디어 서버 작업 중 오류가 발생하였습니다."    
+main:
+  dialog:
+    ok: "확인"
+    cancel: "취소"
+    title: "확인"
+  title: "스마트산업단지 통합관제센터"
+enum:
+  facilitystatus:
+    normal: "정상"
+    error: "에러"
+    poweroff: "꺼짐"
+notification:
+  airsensor:
+    info_not_running: "공기청정기 미작동중"
+    warning_motor1: "공기청정기 1번 모터 정검 필요"
+    warning_motor2: "공기청정기 2번 모터 정검 필요"
+    warning_sensor: "측정센서 정검 필요"
+    warning_filter: "공기청정기 필터 교체 필요"
+  fire:
+    danger_flame: "CCTV 에서 불꽃 위험 감지"
+    danger_smoke: "CCTV 에서 연기 위험 감지"

@@ -1,0 +1,213 @@
+package kr.co.ismartcity.smartfactory.service;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import kr.co.ismartcity.smartfactory.entity.AirSensorWorkplace;
+import kr.co.ismartcity.smartfactory.entity.Facility;
+import kr.co.ismartcity.smartfactory.entity.Notification;
+import lombok.extern.slf4j.Slf4j;
+
+
+@Slf4j
+@Service
+@ConfigurationProperties
+public class MqttAirSensorService {
+	@Autowired
+	private FacilityService facilityService;	
+	
+	@Autowired
+	private AirSensorWorkplaceService airService;
+	
+	@Autowired
+	private NotificationService notiService;
+	
+	@Autowired
+	MessageSourceService messageSourceService;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
+	
+	@Autowired
+	private SimpMessagingTemplate messageTemplate;
+
+	
+	public void processAirSensorData(String mobiusId, Map<String, Object> cin) {
+		log.debug(String.format("processAirSensorData() 1... mobiusId(%s) cin(%s)", mobiusId, cin));
+		
+		try {
+			Facility facil = facilityService.getFacility(mobiusId);
+			if (facil != null) {
+				//String message = "ID:ISC001,TIME:20210208171948,PM10:5.0,PM2.5:4.0,PM1.0:4.0,TEMP:24.6,HUMI:13.2,CO2:1760,TVOC:0,UNIT:0,ALARM:000";
+				String message = (String)cin.get("con");
+				
+				log.debug(String.format("processAirSensorData() 2... message(%s)", message));
+				
+				Pattern p = Pattern.compile("(^[a-zA-Z0-9.]+:[A-Z0-9.]+,)");
+				Matcher m = p.matcher(message);
+				if (m.find()) {
+					AirSensorWorkplace air = parseAirQuality(message);					
+					if (air != null) {						
+						air.setFacility(facil);
+						airService.addAirInfo(air);						
+						sendAirSensorDataToWs(air);
+						
+						log.debug(String.format("processAirSensorData() 3... "));
+					}
+				} else {
+					AirSensorWorkplace air = new AirSensorWorkplace();
+					air.setFacility(facil);
+					air.setRecv_data(message);
+					airService.addAirInfo(air);
+				}				
+			}			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		log.debug(String.format("processAirSensorData() end... "));
+	}
+	
+	private void sendAirSensorDataToWs(AirSensorWorkplace air) {
+		log.debug(String.format("sendAirSensorDataToWs() 1... "));
+		
+		try {
+			if (air != null) {
+				messageTemplate.convertAndSend("/w2c/airsensor", objectMapper.writeValueAsString(air));
+				
+				//ALARM:000   - 1자리: motor, 2자리: sensor, 3자리: filter (좌에서 우방향)				
+				int nAlarm = air.getAlarm();
+				log.debug(String.format("sendAirSensorDataToWs() 2... nAlarm(%d)", nAlarm));
+				
+				if (nAlarm != 0) {
+					StringBuffer sbInfo = new StringBuffer();					
+					int nAlarmMotor = nAlarm/100;
+					int nAlarmSensor = (nAlarm%100)/10;
+					int nAlarmFilter = nAlarm%10;
+					
+					log.debug(String.format("sendAirSensorDataToWs() 3... nAlarmMotor(%d) nAlarmSensor(%d) nAlarmFilter(%d)", nAlarmMotor, nAlarmSensor, nAlarmFilter));
+					
+					if (nAlarmMotor == 1) { 
+						sbInfo.append(messageSourceService.getMessage("notification.airsensor.warning_motor1", Locale.KOREAN));
+					}
+					if (nAlarmMotor == 2) {
+						if (sbInfo.length() > 0)
+							sbInfo.append(", ");
+						sbInfo.append(messageSourceService.getMessage("notification.airsensor.warning_motor2", Locale.KOREAN));
+					}
+					if (nAlarmSensor != 0) {
+						if (sbInfo.length() > 0)
+							sbInfo.append(", ");
+						sbInfo.append(messageSourceService.getMessage("notification.airsensor.warning_sensor", Locale.KOREAN));
+					}
+					if (nAlarmFilter != 0) {
+						if (sbInfo.length() > 0)
+							sbInfo.append(", ");					
+						sbInfo.append(messageSourceService.getMessage("notification.airsensor.warning_filter", Locale.KOREAN));
+					}
+					
+					Notification noti = new Notification();
+					noti.setFacility(air.getFacility());
+					noti.setFrom(noti.NOTI_FROM_AIRSENSOR_IN_WORKPLACE);
+					noti.setLevel(noti.NOTI_LEVEL_WARNING);					// 0: success, 1: info, 2: warning, 3: danger
+					noti.setInfo(sbInfo.toString());
+					
+					log.debug(String.format("sendAirSensorDataToWs() 4... noti(%s)", noti));
+					
+					noti = notiService.addNotification(noti);
+	
+					messageTemplate.convertAndSend("/w2c/notification", objectMapper.writeValueAsString(noti));
+				}
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		log.debug(String.format("sendAirSensorDataToWs() end..."));
+	}
+		
+	private AirSensorWorkplace parseAirQuality(String message) {
+		AirSensorWorkplace air = null;
+		
+		log.debug(String.format("parseAirQuality() 1... "));
+		try {
+			HashMap<String, String> map = splitMessage(message);							
+			//log.debug(String.format("parseAirQuality() 2... map(%s)", map));
+						
+			if (map != null && map.size() >= 7) {
+				air = new AirSensorWorkplace();
+				air.setPm10(parseFloat(map.get("PM10")));
+				air.setPm25(parseFloat(map.get("PM2.5")));
+				air.setPm1(parseFloat(map.get("PM1.0")));
+				air.setCo2(parseFloat(map.get("CO2")));
+				air.setTvoc(parseFloat(map.get("TVOC")));
+				air.setTemp(parseFloat(map.get("TEMP")));
+				air.setHumi(parseFloat(map.get("HUMI")));
+				air.setUnit(parseInt(map.get("UNIT")));
+				air.setAlarm(parseInt(map.get("ALARM")));
+				air.setRecv_data(message);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		log.debug(String.format("parseAirQuality() end... air(%s)", air));
+		
+		return air;
+	}
+	
+	private HashMap<String, String> splitMessage(String message) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		
+		try {
+			if (message != null) {
+				String[] items = message.split(",");
+				if (items != null) {
+					for (int i = 0; i < items.length; i++) {
+						String[] item = items[i].split(":");
+						if (item != null && item.length == 2) {
+							String itemName = item[0];
+							String itemValue = item[1];
+							map.put(itemName, itemValue);
+						}
+					}
+				}
+			}			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return map;
+	}
+		
+	private double parseFloat(String val) {
+		double ret = 0;
+		try {
+			//ret = Float.valueOf(val);
+			ret = Math.round(Float.valueOf(val)*100)/100.0;	// 소수점 3자리에서 반올림
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ret;
+	}
+	
+	private int parseInt(String val) {
+		int ret = 0;
+		try {
+			ret = Integer.parseInt(val);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ret;
+	}
+}

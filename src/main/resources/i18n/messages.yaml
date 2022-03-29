@@ -1,0 +1,41 @@
+login:
+  title: "Smart Island - Login"
+  label: 
+    message: "Please sign in"
+  error:
+    message: "Your username and password are invalid."
+error:
+  password:
+    mismatch: "Your password don't mismatch."
+  request:
+    invalid: "Invalid request."
+    fail: "Could not process normally."
+  server:
+    internal: "Internal Server Error."
+  database:
+    duplicate: "Duplicate entry"
+    notfound: "The item is not found."
+    hasChildren: "This item has some subitems."
+  unreal:
+    fail: "Could not process normally on media server."
+main:
+  dialog:
+    ok: "Ok"
+    cancel: "Cancel"
+    title: "Confirma"
+  title: "Smart Island - Muuido"
+enum:
+  facilitystatus:
+    normal: "normal"
+    error: "error"
+    poweroff: "off"
+notification:
+  airsensor:
+    info_not_running: "the Air Purifier is not Running"
+    warning_motor1: "Need to Check the Air Purifier's 1st Motor"
+    warning_motor2: "Need to Check the Air Purifier's 2nd Motor"
+    warning_sensor: "Need to Check the Dust Sensor in the Airsensor"
+    warning_filter: "Need to Replace the Air Purifier's Filter"
+  fire:
+    danger_flame: "Detected a Flame by the CCTV"
+    danger_smoke: "Detected Smoke by the CCTV"    

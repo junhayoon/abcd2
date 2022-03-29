@@ -1,0 +1,138 @@
+logging:
+#  file.name: applogs/smartfactory.log
+#  file.max-size: 2MB
+#  file.max-history: 30
+  level:
+    root: INFO
+    kr.co.ismartcity: DEBUG
+    org:
+      springframework.web: INFO
+      hibernate:
+        type:
+          descriptor:
+            sql: trace
+    com.querydsl.sql: INFO
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+  kafka:
+    bootstrap-servers:
+      #- 172.16.2.11:9092
+      - 172.16.2.11:9092
+    consumer:
+      group-id: sisland
+      auto-offset-reset: earliest
+      auto-start: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+master:
+  datasource:
+    url: jdbc:mariadb://172.16.2.54:3306/smartfactory?autoReconnect=true&useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+    username: smartfactory
+    password: smartfactory#1020
+    driver-class-name: com.mariadb.jdbc.Driver
+    hikari:
+      pool-name: hikari-cp
+      maximum-pool-size: 30
+      minimum-idle: 2
+      data-source-properties:
+          cachePrepStmts: true
+          prepStmtCacheSize: 250
+          prepStmtCacheSqlLimit: 2048
+          useServerPrepStmts: true
+
+#slave:
+#  datasource:
+#    url: jdbc:mysql://172.16.2.15:3306/smartfactory?autoReconnect=true&useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+#    username: smartfactory
+#    password: smartfactory#1020
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    hikari:
+#      pool-name: hikari-cp
+#      maximum-pool-size: 30
+#      minimum-idle: 2
+#      data-source-properties:
+#          cachePrepStmts: true
+#          prepStmtCacheSize: 250
+#          prepStmtCacheSqlLimit: 2048
+#          useServerPrepStmts: true
+
+mqtt:
+  completionTimeout: 30
+  qos : 2
+  clientId: ismart_sandan_stage
+  #url: ssl://172.16.2.13:8883
+  #url: tcp://172.16.2.51:1883
+  url: tcp://112.216.155.101:1883
+  url2: tcp://112.216.155.99:1883
+  #url: tcp://172.16.2.51:1883
+  #url: tcp://172.16.2.42:1883 # 외부 test용 mobius
+  topic: /oneM2M/req/Smartfactory/#
+  cafile: /prod/ca-crt.pem_
+  tlsv: TLSv1.2
+
+mobius:
+  orgin: SIOrgin
+  #address: 172.16.2.13
+  #address: 172.16.2.51
+  address: 112.216.155.101
+  address2: 112.216.155.99
+  #address: 172.16.2.51
+  #address: 172.16.2.42 # 외부 test용 mobius
+  #mp_url: https://${mobius.address}:7579
+  mp_url: http://${mobius.address}:7579
+  cb: Smartfactory
+  rn: platform.MOBIUS.sub
+  aeid: platform.MOBIUS.AE
+  nu: mqtt://${mobius.address}/${mobius.orgin}?ct=json
+
+facility:
+  filepath :
+    symbol : /smartfactory/symbol/
+
+serviceLinkUrl:
+  vmsServerUrl: http://1.1.1.1:8282
+  droneCSUrl: http://172.16.2.53:8282
+
+#vms:
+#  ip: 172.16.2.24
+#  restport: 8080
+#  streamport: 8080
+#  id: sandan1
+#  pw: P@ssw0rd1
+
+vms:
+  restip: 172.16.2.31
+  streamip: 172.16.2.52
+  restport: 8080
+  streamport: 8087
+  id: sandan11
+  pw: P@ssw0rd1
+
+va-system:
+  restIp: 172.16.2.34
+  restPort: 7681
+  restId: intellivix
+  restPw: pass0001!
+  keep-alive: 300000        # 1000*60*5 : 5분
+  wsIp: 172.16.2.34
+  wsPort: 7681
+
+ai:
+  airRestUrl: http://172.16.2.35:18080
+  airPredictRestUrl: http://172.16.2.35:19080
+#http://121.142.243.234:28080
+#http://121.142.243.234:29080
+
+smtp:
+  serverIp: 172.16.2.42
+  serverPort: 25
+  senderEmail: postmaster@ismartsandan.or.kr
+  recipientEmail: gbjin7172@gmail.com

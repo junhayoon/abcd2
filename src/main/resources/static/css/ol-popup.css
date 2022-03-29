@@ -1,0 +1,244 @@
+.ol-popup {
+    display: none;
+    position: absolute;
+    background-color: #283e64;
+    padding: 2px;
+    border: 1px solid #cccccc;
+    bottom: 56px;
+    left: -50px;
+    width: 440px;
+    z-index: 10;
+    padding-bottom: 10px;
+}
+
+.ol-popup:after, .ol-popup:before {
+    top: 100%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.ol-popup:after {
+    border-top-color: #283e64;
+    border-width: 10px;
+    left: 48px;
+    margin-left: -10px;
+}
+
+.ol-popup:before {
+    border-top-color: #283e64;
+    border-width: 11px;
+    left: 48px;
+    margin-left: -11px;
+}
+
+.ol-popup-content {
+    min-width: 300px;
+    max-height: 600px;
+    overflow-x: auto;
+}
+
+.ol-popup-closer {
+    position: absolute;
+    top: 14px;
+    right: 12px;
+    font-size: 150%;
+    color: gray;
+    text-decoration: none;
+}
+
+.ol-popup-closer:hover{
+    text-decoration: none !important;
+}
+
+.ol-popup-closer:after {
+    content: "\2716";
+}
+
+.ol-popup-content h3 {
+    margin: 0.25em 0;
+}
+
+.ol-popup.marker {
+    margin-bottom: 30px;
+}
+
+.ol-popup .container-fluid {
+	padding-right: 0px !important;
+	padding-left: 0px !important;
+	width: auto;
+}
+
+.ol-popup .htline {
+	border-top: 1px solid #dee2e6;
+}
+
+.ol-popup .vrline {
+	border-right: 1px solid #dee2e6;
+}
+
+.ol-popup .border-gray {
+	border-color: #dee2e6;
+}
+
+.ol-popup .tab-content {
+	border-left: 1px solid #dee2e6;
+	border-right: 1px solid #dee2e6;
+	border-bottom: 1px solid #dee2e6;
+}
+
+.ol-popup .rounded-text {
+	border-radius: 1rem;
+
+}
+
+.ol-popup .div-flex {
+	display: flex !important;
+}
+
+.ol-popup .col-flex {
+	display: flex !important;
+}
+
+.ol-popup .col-fill {
+	flex: 1 !important;
+}
+
+.ol-popup .col-sl-1 {
+	margin-left: -5px;
+}
+
+.ol-popup .col-sl-2 {
+	margin-left: -10px;
+}
+
+.ol-popup .col-sl-3 {
+	margin-left: -15px;
+}
+
+.ol-popup #popupFacilityTable {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0 2px;
+}
+
+.ol-popup #popupFacilityTable th {
+	background-color: #bdbdbd;
+	padding: 4px 8px;
+}
+
+.ol-popup #popupFacilityTable td {
+	background-color: black;
+	color: #89b3fa;
+	padding: 4px 8px;
+}
+
+.ol-popup b {
+	color: white;
+	margin-right: 6px;
+}
+
+.ol-popup #popupFacilityTitle {
+	padding: 10px 10px;
+	height: 44px;
+}
+
+.ol-popup #airStatusTitle {
+	text-align: center;
+	color: #5abcd9;
+	padding: 20px 0px;
+}
+
+.ol-popup .airStatusContents {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	background-color: #d4d4d4;
+	margin-bottom: 4px;
+	padding-top: 6px;
+}
+
+.ol-popup .airStatusContents:last-child {
+	margin-bottom: 0;
+}
+
+.ol-popup .airStatusItem {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	position: relative;
+	height: 120px;
+}
+
+.ol-popup .smallContents .airStatusItem {
+	height: 60px;
+}
+
+.ol-popup .airStatusItem > span {
+	text-align: center;
+	height: 40px;
+	display: flex;
+	align-items: center;
+}
+
+.ol-popup .smallContents .airStatusItem > span {
+	height: 20px;
+}
+
+.ol-popup .airStatusItem .airStatusTextWrap {
+	position: absolute;
+	bottom: 35px;
+}
+
+.ol-popup .airStatusItem .airStatusBadgeWrap {
+	bottom: 26px;
+	display: flex;
+	flex-flow: column;
+	height: 46px;
+	align-items: center;
+	justify-content: center;
+}
+
+.ol-popup .airStatusItem .airStatusBadgeWrap span {
+	margin-top: 4px;
+}
+
+.ol-popup .airStatusItem .airStatusBadgeWrap span:first-child {
+	margin-top: 0;
+}
+
+.ol-popup .smallContents .airStatusItem .airStatusTextWrap {
+	bottom: 10px;
+}
+
+.ol-popup .airStatusItem .airStatusTextWrap .airStatusBigText {
+	font-size: 28px;
+}
+
+.ol-popup .airStatusSeparator {
+	border-left: 2px solid white;
+	height: 66px;
+	margin-top: 22px;
+	box-shadow: -2px 0px 0px 0px rgb(0 0 0 / 30%);
+}
+
+.ol-popup .smallContents .airStatusSeparator {
+	height: 40px;
+	margin-top: 10px;
+}
+
+.ol-popup .airStatusItem img {
+	position: absolute;
+	bottom: 25px;
+	left: 50%;
+	transform: translate(-50%, 0);
+}
+
+.ol-popup .badge {
+	font-size: 100%;
+}

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="kr.co.ismartcity.smartfactory.mapper.bus.BusMapper">
+	
+	<!-- GPS 최신 데이터 Insert & Update -->
+	<insert id="insertBusGpsInfo" parameterType="java.util.List">
+		/* BusSQL - insertBusGpsInfo : GPS 최신 데이터 Insert,Update */
+		INSERT INTO	bus_gps_itf (
+			CM_NUMBER
+		   ,BI_DATE, BI_TIME
+		   ,BI_X_POSITION, BI_Y_POSITION
+		   ,ID, DAY_DISTNCE, REG_DT
+		)
+		VALUES 
+		<foreach collection="list" item="item" separator=",">
+			(
+			   #{item.CM_NUMBER}
+			   ,#{item.BI_DATE}, #{item.BI_TIME}
+			   ,#{item.BI_X_POSITION}, #{item.BI_Y_POSITION}
+		   	   ,#{item.ID}, #{item.DAY_DISTNCE}, NOW()
+			)
+		</foreach>
+		ON DUPLICATE KEY UPDATE
+			BI_DATE = VALUES(BI_DATE)
+		   ,BI_TIME = VALUES(BI_TIME)
+		   ,BI_X_POSITION = VALUES(BI_X_POSITION)
+		   ,BI_Y_POSITION = VALUES(BI_Y_POSITION)
+		   ,ID = VALUES(ID)
+		   ,DAY_DISTNCE = VALUES(DAY_DISTNCE)
+		   ,REG_DT = VALUES(REG_DT)
+	</insert>
+
+	<!-- GPS 로그 데이터 Insert -->
+	<insert id="insertBusGpsInfoLog" parameterType="java.util.List">
+		/* BusSQL - insertBusGpsInfoLog : GPS 로그 데이터 Insert */
+		INSERT INTO	bus_gps_itf_log (
+			seq, BI_DATE, BI_TIME
+		   ,CM_NUMBER, BI_X_POSITION, BI_Y_POSITION
+		   ,ID, DAY_DISTNCE, REG_DT
+		)
+		VALUES 
+		<foreach collection="list" item="item" separator=",">
+			(
+				NULL, #{item.BI_DATE}, #{item.BI_TIME}
+			   ,#{item.CM_NUMBER}, #{item.BI_X_POSITION}, #{item.BI_Y_POSITION}
+		   	   ,#{item.ID}, #{item.DAY_DISTNCE}, NOW()
+			)
+		</foreach>
+	</insert>
+
+</mapper>
